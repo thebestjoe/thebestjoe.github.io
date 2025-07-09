@@ -21,7 +21,7 @@ export const askAlchemist = async (question: string): Promise<string> => {
   try {
     const client = getClient();
     const response: GenerateContentResponse = await client.models.generateContent({
-        model: 'gemini-2.5-flash-preview-04-17',
+        model: 'gemini-2.5-flash',
         contents: `A curious mind asks: "${question}"`,
         config: {
             systemInstruction: systemInstruction,
