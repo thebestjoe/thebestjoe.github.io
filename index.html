@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -35,22 +34,562 @@
     </script>
     <!-- Add Babel Standalone for in-browser JSX/TSX transpilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script type="importmap">
+    <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.1.0",
+    "react": "https://esm.sh/react@19.1.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.1.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@7.6.3",
     "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-    "react/": "https://esm.sh/react@^19.1.0/",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.3"
+    "react/": "https://esm.sh/react@^19.1.0/"
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-stone-50 text-stone-800">
     <div id="root"></div>
-    <!-- Set script type to "text/babel" and add presets for React and TypeScript -->
-    <script type="text/babel" data-presets="react,typescript" data-type="module" src="/index.tsx"></script>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <!-- 
+      All React/TSX code is consolidated here to avoid MIME type errors
+      on static hosts like GitHub Pages that don't serve .tsx files correctly.
+      Babel transpiles this single block of code in the browser.
+    -->
+    <script type="text/babel" data-presets="react,typescript" data-type="module">
+      // Imports from CDNs via importmap
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      import { HashRouter, Routes, Route, NavLink, Link, useParams } from 'react-router-dom';
+
+      // ======== TYPES ========
+      // These interfaces are used by Babel for type-checking during transpilation
+      // and are stripped out of the final code run by the browser.
+      interface Product {
+        id: string;
+        name: string;
+        shortDescription: string;
+        longDescription: string;
+        price: number;
+        imageUrl: string;
+        category: string;
+      }
+
+      interface Event {
+          id: string;
+          title: string;
+          date: string;
+          location: string;
+          description: string;
+      }
+      
+      // ======== DATA ========
+      
+      const products: Product[] = [
+        {
+          id: 'sol-tincture',
+          name: 'Sol Tincture',
+          category: 'Planetary Tinctures',
+          price: 35.00,
+          shortDescription: 'An enlivening tincture aligned with the Sun for vitality and spirit.',
+          longDescription: 'Our Sol Tincture is crafted from sun-basked botanicals like Calendula and St. John\'s Wort, harvested at the peak of their solar influence. The spagyric process separates, purifies, and recombines the plant\'s essence, creating a potent elixir that resonates with the energy of the Sun. It is intended to invigorate the spirit, promote self-confidence, and illuminate the inner self.',
+          imageUrl: 'https://picsum.photos/seed/sol/500/500'
+        },
+        {
+          id: 'luna-elixir',
+          name: 'Luna Elixir',
+          category: 'Planetary Tinctures',
+          price: 33.00,
+          shortDescription: 'A calming elixir aligned with the Moon for intuition and dreams.',
+          longDescription: 'The Luna Elixir is a gentle yet profound preparation made from lunar-governed herbs such as Mugwort and Passionflower. This spagyric essence is designed to soothe the nervous system, enhance intuitive abilities, and encourage deep, restorative sleep. It serves as a key to the subconscious and the world of dreams.',
+          imageUrl: 'https://picsum.photos/seed/luna/500/500'
+        },
+        {
+          id: 'mercury-quintessence',
+          name: 'Mercury Quintessence',
+          category: 'Advanced Preparations',
+          price: 45.00,
+          shortDescription: 'A quintessence for clarity of mind and communication.',
+          longDescription: 'Associated with the planet Mercury, this quintessence is created with herbs like Lavender and Gotu Kola. The meticulous alchemical process yields a preparation that aims to sharpen the intellect, clear mental fog, and facilitate eloquent communication. It is a perfect ally for students, writers, and public speakers.',
+          imageUrl: 'https://picsum.photos/seed/mercury/500/500'
+        },
+        {
+          id: 'venus-cordial',
+          name: 'Venus Cordial',
+          category: 'Planetary Tinctures',
+          price: 38.00,
+          shortDescription: 'A heart-opening cordial aligned with Venus for love and harmony.',
+          longDescription: 'Crafted with Rose, Damiana, and other Venusian herbs, this cordial is a tribute to love, beauty, and connection. The spagyric art transforms these botanicals into an elixir that nurtures the heart chakra, promotes emotional healing, and attracts harmonious relationships.',
+          imageUrl: 'https://picsum.photos/seed/venus/500/500'
+        },
+        {
+          id: 'mars-tonic',
+          name: 'Mars Tonic',
+          category: 'Planetary Tinctures',
+          price: 35.00,
+          shortDescription: 'A dynamic tonic for courage, strength, and motivation.',
+          longDescription: 'This powerful tonic is made from Martial herbs like Nettle and Ginger. It is spagyrically prepared to imbue the user with the qualities of Mars: courage, focused energy, and the will to act. An excellent support for athletes or anyone facing a significant challenge.',
+          imageUrl: 'https://picsum.photos/seed/mars/500/500'
+        },
+        {
+          id: 'prima-materia-salt',
+          name: 'Prima Materia Salt',
+          category: 'Alchemical Salts',
+          price: 25.00,
+          shortDescription: 'Purified plant salts for grounding and mineralization.',
+          longDescription: 'The Prima Materia Salt is the purified mineral body of a single plant, obtained through calcination. These salts represent the grounding, physical foundation of the plant\'s being. They can be used to mineralize water, potentiate other preparations, or as a ritual element for grounding and embodiment.',
+          imageUrl: 'https://picsum.photos/seed/salt/500/500'
+        },
+      ];
+
+      const events: Event[] = [
+          {
+              id: 'intro-spagyrics-workshop',
+              title: 'Introduction to Spagyrics Workshop',
+              date: 'Saturday, October 12, 2024 - 10:00 AM to 4:00 PM',
+              location: 'Online via Zoom',
+              description: 'Join us for a comprehensive one-day workshop covering the theory and basic practice of spagyric alchemy. We will explore the three principles (Sulphur, Mercury, Salt) and demonstrate the initial steps of creating a plant tincture.'
+          },
+          {
+              id: 'planetary-alchemy-seminar',
+              title: 'Planetary Alchemy & Herbalism Seminar',
+              date: 'Sunday, November 3, 2024 - 1:00 PM to 5:00 PM',
+              location: 'Glastonbury, UK',
+              description: 'A deep dive into the correspondence between the seven classical planets and the plant kingdom. Learn how to align your preparations with astrological timings for enhanced potency and specific effects.'
+          },
+          {
+              id: 'advanced-distillation-course',
+              title: 'Advanced Alchemical Distillation Course',
+              date: 'Weekend of December 7-8, 2024',
+              location: 'Our laboratory in Somerset, UK',
+              description: 'An intensive, hands-on course for those with prior experience. This course will focus on advanced techniques for separating and purifying the Mercury (alcohol/spirit) of the plant. Limited spots available.'
+          }
+      ];
+
+      // ======== COMPONENTS ========
+
+      const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-6.364-.386 1.591-1.591M3 12h2.25m.386-6.364 1.591 1.591M12 12a2.25 2.25 0 0 0-2.25 2.25 2.25 2.25 0 0 0 2.25 2.25 2.25 2.25 0 0 0 2.25-2.25A2.25 2.25 0 0 0 12 12Z" />
+        </svg>
+      );
+
+      const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+      );
+
+      interface ProductCardProps {
+        product: Product;
+      }
+
+      const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+        return (
+          <Link to={`/products/${product.id}`} className="group block">
+            <div className="bg-white border border-stone-200 rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
+              <div className="overflow-hidden">
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="p-5 flex-grow flex flex-col">
+                <h3 className="text-xl font-semibold font-serif text-stone-900">{product.name}</h3>
+                <p className="text-sm text-gold font-semibold mt-1">{product.category}</p>
+                <p className="mt-2 text-stone-600 text-sm flex-grow">{product.shortDescription}</p>
+                <div className="mt-4 flex justify-between items-center">
+                  <span className="text-lg font-bold text-stone-800">£{product.price.toFixed(2)}</span>
+                  <span className="text-sm font-medium text-brand-red group-hover:text-black transition-colors">View Details &rarr;</span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        );
+      };
+
+      const Footer: React.FC = () => {
+        return (
+          <footer className="bg-black text-white">
+            <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+              <div className="text-center text-sm text-stone-400">
+                <p>&copy; {new Date().getFullYear()} Spagyria.co.uk. All Rights Reserved.</p>
+                <p className="mt-2">The art of nature perfected.</p>
+              </div>
+            </div>
+          </footer>
+        );
+      };
+      
+      const navLinks = [
+        { name: 'Home', path: '/' },
+        { name: 'Products', path: '/products' },
+        { name: 'Events', path: '/events' },
+        { name: 'About', path: '/about' },
+        { name: 'Resources', path: '/resources' },
+        { name: 'Contact', path: '/contact' },
+      ];
+
+      const Header: React.FC = () => {
+        const activeLinkStyle = {
+          color: '#A18A68',
+          borderBottom: '2px solid #A18A68'
+        };
+
+        return (
+          <header className="bg-black shadow-md sticky top-0 z-50">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-20">
+                <div className="flex items-center">
+                  <NavLink to="/" className="text-white hover:text-gold transition-colors duration-300">
+                      <div className="flex items-center space-x-3">
+                          <SunIcon className="h-6 w-6 text-gold" />
+                          <span className="text-2xl font-semibold font-serif tracking-wider">SPAGYRIA</span>
+                          <MoonIcon className="h-6 w-6 text-silver" />
+                      </div>
+                  </NavLink>
+                </div>
+                <nav className="hidden md:flex space-x-8">
+                  {navLinks.map((link) => (
+                    <NavLink
+                      key={link.name}
+                      to={link.path}
+                      className="text-white hover:text-gold transition-colors duration-300 text-sm font-medium tracking-widest uppercase pb-1"
+                      style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
+                    >
+                      {link.name}
+                    </NavLink>
+                  ))}
+                </nav>
+              </div>
+            </div>
+          </header>
+        );
+      };
+
+      interface LayoutProps {
+        children: React.ReactNode;
+      }
+
+      const Layout: React.FC<LayoutProps> = ({ children }) => {
+        return (
+          <div className="flex flex-col min-h-screen bg-stone-50">
+            <Header />
+            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        );
+      };
+
+      // ======== PAGES ========
+
+      const pageResources = [
+        {
+          title: "The Alchemist's Handbook",
+          author: "Frater Albertus",
+          description: "A foundational and practical guide to laboratory alchemy. Considered essential reading for any aspiring spagyrist."
+        },
+        {
+          title: "Real Alchemy: A Primer of Practical Alchemy",
+          author: "Robert Allen Bartlett",
+          description: "An excellent modern guide that bridges the gap between ancient texts and contemporary laboratory practice."
+        },
+        {
+          title: "The Path of Alchemy: Energetic Healing & the World of Natural Magic",
+          author: "Mark Stavish",
+          description: "Explores the spiritual, philosophical, and practical applications of alchemy in daily life."
+        },
+        {
+          title: "Spagyrics: The Alchemical Preparation of Medicinal Essences, Tinctures, and Elixirs",
+          author: "Manfred M. Junius",
+          description: "A detailed and scholarly work on the subject, covering both the history and the practical techniques of plant alchemy."
+        },
+      ];
+
+      const ResourcesPage: React.FC = () => {
+        return (
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-stone-900">Resources & Reading</h1>
+              <p className="mt-4 max-w-2xl mx-auto text-stone-600">
+                The path of alchemy is one of lifelong learning. Here are some trusted resources to guide your journey into the Great Work.
+              </p>
+            </div>
+            
+            <div className="space-y-8">
+              {pageResources.map((resource, index) => (
+                <div key={index} className="bg-white p-6 rounded-lg shadow-md border border-stone-200">
+                  <h2 className="text-2xl font-bold font-serif text-brand-red">{resource.title}</h2>
+                  <p className="text-sm font-semibold text-stone-500 mt-1">by {resource.author}</p>
+                  <p className="mt-3 text-stone-700 leading-relaxed">{resource.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      const ContactPage: React.FC = () => {
+        return (
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-stone-900">Get in Touch</h1>
+              <p className="mt-4 max-w-2xl mx-auto text-stone-600">
+                We welcome questions, inquiries about custom preparations, or correspondence with fellow seekers on the path.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 md:p-12 rounded-lg shadow-lg border border-stone-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                  <h2 className="text-2xl font-bold font-serif text-stone-800">Contact Information</h2>
+                  <p className="mt-4 text-stone-600">
+                    For all inquiries, please feel free to reach out to us. We aim to respond within 2-3 business days.
+                  </p>
+                  <div className="mt-6 space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-brand-green">Email</h3>
+                      <a href="mailto:inquiries@spagyria.co.uk" className="text-gold hover:underline">inquiries@spagyria.co.uk</a>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-brand-green">Location</h3>
+                      <p className="text-stone-600">Based in the heart of Somerset, UK</p>
+                    </div>
+                  </div>
+                </div>
+                <form>
+                  <div className="space-y-6">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-stone-700">Full Name</label>
+                      <input type="text" id="name" name="name" className="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-gold focus:border-gold" />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-stone-700">Email Address</label>
+                      <input type="email" id="email" name="email" className="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-gold focus:border-gold" />
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-stone-700">Message</label>
+                      <textarea id="message" name="message" rows={5} className="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-gold focus:border-gold"></textarea>
+                    </div>
+                    <div>
+                      <button type="submit" className="w-full bg-brand-red text-white font-bold tracking-wider uppercase text-sm px-8 py-3 rounded-md hover:bg-black transition-colors duration-300 shadow-lg">
+                        Send Message
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const AboutPage: React.FC = () => {
+        return (
+          <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-lg border border-stone-200">
+            <h1 className="text-5xl font-bold text-center mb-8 text-stone-900">About Spagyria.co.uk</h1>
+            
+            <div className="prose prose-lg prose-stone max-w-none mx-auto text-stone-700 leading-relaxed">
+              <p>
+                Spagyria.co.uk was founded from a deep reverence for the wisdom of Nature and the timeless traditions of alchemy. Our founder, an alchemist with over two decades of experience in both laboratory work and hermetic philosophy, sought to create a source for genuine, high-quality spagyric preparations made with integrity and intention.
+              </p>
+              
+              <h2 className="text-brand-green">Our Philosophy: Solve et Coagula</h2>
+              <p>
+                The core of our practice is the alchemical maxim "Solve et Coagula" – Dissolve and Coagulate. We believe that to truly understand something, whether a plant or a part of ourselves, we must first break it down to its essential components. By separating the plant's Salt, Sulphur, and Mercury, we can purify each part individually, removing impurities and elevating its nature. 
+              </p>
+              <p>
+                Then, we recombine these purified essences. The result is not merely a mixture, but a resurrected being—a holistic remedy that is more than the sum of its parts. This is the heart of our work: to create preparations that are potent, pure, and resonate with the vital force of life itself.
+              </p>
+              
+              <h2 className="text-brand-red">Our Commitment</h2>
+              <ul>
+                <li><strong>Quality Botanicals:</strong> We source our plants from organic or wildcrafted suppliers, harvesting with respect for the environment and at astrologically significant times.</li>
+                <li><strong>Authentic Processes:</strong> Our methods are rooted in classical alchemical texts and hands-on laboratory practice, avoiding modern shortcuts that compromise the integrity of the work.</li>
+                <li><strong>Education:</strong> We are committed to sharing the knowledge of this profound art, helping to demystify alchemy and make its benefits accessible to all who are called to it.</li>
+              </ul>
+
+              <p className="text-center italic mt-12 border-t border-gold pt-6 text-gold">
+                  "Natura non facit saltus." <br /> (Nature does not make leaps.)
+              </p>
+
+            </div>
+          </div>
+        );
+      };
+
+      const EventsPage: React.FC = () => {
+        return (
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-stone-900">Events & Workshops</h1>
+              <p className="mt-4 max-w-2xl mx-auto text-stone-600">
+                Join us to learn and share in the Great Work. We offer a range of online and in-person events to deepen your understanding of alchemy and spagyrics.
+              </p>
+            </div>
+
+            <div className="space-y-12">
+              {events.map((event) => (
+                <div key={event.id} className="bg-white p-8 rounded-lg shadow-lg border border-gold/30">
+                  <h2 className="text-3xl font-bold font-serif text-stone-900">{event.title}</h2>
+                  <div className="mt-2 text-sm text-stone-500 font-semibold space-x-4">
+                    <span>{event.date}</span>
+                    <span>&bull;</span>
+                    <span>{event.location}</span>
+                  </div>
+                  <p className="mt-4 text-stone-700 leading-relaxed">{event.description}</p>
+                  <button className="mt-6 bg-brand-red text-white font-bold tracking-wider uppercase text-xs px-6 py-2 rounded-md hover:bg-black transition-colors duration-300">
+                      Register Interest
+                  </button>
+                </div>
+              ))}
+               {events.length === 0 && (
+                  <p className="text-center text-stone-500">There are no upcoming events scheduled. Please check back soon.</p>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      const ProductDetailPage: React.FC = () => {
+        const { productId } = useParams<{ productId: string }>();
+        const product = products.find(p => p.id === productId);
+
+        if (!product) {
+          return (
+            <div className="text-center py-20">
+              <h1 className="text-4xl font-bold">Product Not Found</h1>
+              <p className="mt-4">The alchemical preparation you seek has vanished into the ether.</p>
+              <Link to="/products" className="mt-6 inline-block text-brand-red hover:underline">
+                Return to All Products
+              </Link>
+            </div>
+          );
+        }
+
+        return (
+          <div className="bg-white p-6 md:p-12 rounded-lg shadow-lg border border-stone-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                  <div>
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-auto object-cover rounded-lg shadow-md" />
+                  </div>
+                  <div>
+                      <Link to="/products" className="text-sm text-gold hover:underline mb-2 block">&larr; Back to Products</Link>
+                      <h1 className="text-4xl lg:text-5xl font-bold font-serif text-stone-900">{product.name}</h1>
+                      <p className="text-lg text-gold font-semibold mt-2">{product.category}</p>
+                      <span className="block text-3xl font-bold text-stone-800 mt-4">£{product.price.toFixed(2)}</span>
+                      
+                      <div className="mt-6 prose prose-stone max-w-none text-stone-700 leading-relaxed">
+                          <p className="font-semibold">{product.shortDescription}</p>
+                          <p>{product.longDescription}</p>
+                      </div>
+
+                      <button className="mt-8 w-full bg-brand-red text-white font-bold tracking-wider uppercase text-sm px-8 py-4 rounded-md hover:bg-black transition-colors duration-300 shadow-lg">
+                          Add to Basket (Placeholder)
+                      </button>
+                  </div>
+              </div>
+          </div>
+        );
+      };
+
+      const ProductsPage: React.FC = () => {
+        return (
+          <div>
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-stone-900">Our Alchemical Products</h1>
+              <p className="mt-4 max-w-2xl mx-auto text-stone-600">
+                Each of our spagyric preparations is crafted with intention, following ancient alchemical principles to bring forth the plant's fullest potential.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      const HomePage: React.FC = () => {
+        const featuredProducts = products.slice(0, 3);
+
+        return (
+          <div className="space-y-16 md:space-y-24">
+            {/* Hero Section */}
+            <section className="text-center py-16 md:py-24 bg-white rounded-lg shadow-sm border border-stone-200">
+              <div className="max-w-3xl mx-auto px-4">
+                <h1 className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight">The Soul of the Plant</h1>
+                <p className="mt-6 text-lg md:text-xl text-stone-600 leading-relaxed">
+                  Discover the ancient art of Spagyrics, an alchemical tradition that seeks to separate, purify, and recombine the essence of plants to create potent, holistic remedies.
+                </p>
+                <Link
+                  to="/products"
+                  className="mt-10 inline-block bg-brand-red text-white font-bold tracking-wider uppercase text-sm px-8 py-4 rounded-md hover:bg-black transition-colors duration-300 shadow-lg"
+                >
+                  Explore Our Creations
+                </Link>
+              </div>
+            </section>
+
+            {/* Featured Products Section */}
+            <section>
+              <h2 className="text-4xl font-bold text-center text-stone-900 mb-12">Featured Preparations</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              <div className="text-center mt-12">
+                  <Link to="/products" className="text-brand-red hover:text-black font-semibold">
+                      View All Products &rarr;
+                  </Link>
+              </div>
+            </section>
+
+            {/* What is Spagyria Section */}
+            <section className="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-stone-200">
+              <h2 className="text-4xl font-bold text-stone-900 text-center">What is Spagyria?</h2>
+              <div className="mt-6 max-w-4xl mx-auto text-stone-700 leading-loose space-y-4">
+                  <p>
+                      Spagyria (from Greek: spao, to separate, and ageiro, to reunite) is a branch of practical laboratory alchemy applied to the plant kingdom. It is a holistic process where the three essential principles of a plant—<span className="font-semibold text-gold">Sulphur (the soul, or essential oil)</span>, <span className="font-semibold text-silver">Mercury (the spirit, or alcohol)</span>, and <span className="font-semibold text-stone-800">Salt (the body, or mineral salts)</span>—are separated, purified, and then recombined.
+                  </p>
+                  <p>
+                      This intricate process creates a preparation that is more potent, biocompatible, and energetically complete than a simple tincture or extract. It is a remedy that works on the physical, energetic, and spiritual levels, honoring the complete being of the plant to nourish the complete being of a person.
+                  </p>
+              </div>
+            </section>
+          </div>
+        );
+      };
+
+      // ======== APP ========
+      const App: React.FC = () => {
+        return (
+          <HashRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products/:productId" element={<ProductDetailPage />} />
+                <Route path="/events" element={<EventsPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/resources" element={<ResourcesPage />} />
+              </Routes>
+            </Layout>
+          </HashRouter>
+        );
+      };
+
+      // ======== RENDERER ========
+      const rootElement = document.getElementById('root');
+      if (!rootElement) {
+        throw new Error("Could not find root element to mount to");
+      }
+
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      );
+    </script>
+  </body>
 </html>
