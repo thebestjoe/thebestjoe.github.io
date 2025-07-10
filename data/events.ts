@@ -1,5 +1,5 @@
 
-import { Event } from '../types';
+import { Event } from '../types.ts';
 
 export const events: Event[] = [
     {
@@ -23,4 +23,4 @@ export const events: Event[] = [
         location: 'Our laboratory in Somerset, UK',
         description: 'An intensive, hands-on course for those with prior experience. This course will focus on advanced techniques for separating and purifying the Mercury (alcohol/spirit) of the plant. Limited spots available.'
     }
-]
+];

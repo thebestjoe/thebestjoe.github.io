@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { SunIcon, MoonIcon } from './icons';
+import { SunIcon, MoonIcon } from './icons.tsx';
 
 const navLinks = [
   { name: 'Home', path: '/' },

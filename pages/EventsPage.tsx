@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { events } from '../data/events';
+import { events } from '../data/events.ts';
 
 const EventsPage: React.FC = () => {
   return (

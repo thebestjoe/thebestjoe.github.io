@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { products } from '../data/products';
-import ProductCard from '../components/ProductCard';
+import { products } from '../data/products.ts';
+import ProductCard from '../components/ProductCard.tsx';
 
 const ProductsPage: React.FC = () => {
   return (
