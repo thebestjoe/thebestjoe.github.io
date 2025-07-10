@@ -4,12 +4,15 @@ let ai: GoogleGenAI | null = null;
 
 const getClient = (): GoogleGenAI => {
     if (!ai) {
-        if (!process.env.API_KEY) {
-            // This error is thrown when the function is called, not on module load.
-            console.error("API_KEY environment variable not set. Gemini API calls will fail.");
-            throw new Error("The alchemist's tools are missing. The API key is not configured.");
+        // In a pure static browser environment, process.env is not available.
+        // We check for its existence to avoid a ReferenceError.
+        const apiKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
+
+        if (!apiKey) {
+            console.error("API_KEY is not available in this environment. Gemini API calls will fail.");
+            throw new Error("The alchemist's tools are missing. The API key is not configured for this environment.");
         }
-        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        ai = new GoogleGenAI({ apiKey });
     }
     return ai;
 };

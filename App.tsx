@@ -1,13 +1,13 @@
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
-import AboutPage from './pages/AboutPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import EventsPage from './pages/EventsPage';
-import ContactPage from './pages/ContactPage';
-import ResourcesPage from './pages/ResourcesPage';
+import Layout from './components/Layout.tsx';
+import HomePage from './pages/HomePage.tsx';
+import ProductsPage from './pages/ProductsPage.tsx';
+import AboutPage from './pages/AboutPage.tsx';
+import ProductDetailPage from './pages/ProductDetailPage.tsx';
+import EventsPage from './pages/EventsPage.tsx';
+import ContactPage from './pages/ContactPage.tsx';
+import ResourcesPage from './pages/ResourcesPage.tsx';
 
 const App: React.FC = () => {
   return (

@@ -1,4 +1,4 @@
-import { ResourceCategory } from '../types';
+import { ResourceCategory } from '../types.ts';
 
 export const resources: ResourceCategory[] = [
   {

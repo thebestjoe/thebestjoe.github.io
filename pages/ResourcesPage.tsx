@@ -1,6 +1,6 @@
 import React from 'react';
-import { resources } from '../data/resources';
-import { ResourceCategory, ResourceItem } from '../types';
+import { resources } from '../data/resources.ts';
+import { ResourceCategory, ResourceItem } from '../types.ts';
 
 const ExternalLinkIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1.5 inline-block align-baseline text-gray-400 group-hover:text-red-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">

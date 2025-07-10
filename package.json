@@ -1,25 +1,22 @@
 {
-  "name": "spagyria-website",
-  "version": "1.0.0",
-  "description": "A minimalist website for Spagyria, a modern spagyric apothecary offering handcrafted plant-based elixirs for wellness and balance.",
-  "main": "index.tsx",
+  "name": "spagyria",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs",
-    "serve": "npx serve .",
-    "start": "npm run build && npm run serve"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^1.8.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.3"
+    "react-router-dom": "^7.6.3",
+    "@google/genai": "^1.8.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "esbuild": "^0.23.0",
-    "serve": "^14.2.3",
-    "typescript": "^5.5.3"
+    "@types/node": "^22.14.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
   }
 }

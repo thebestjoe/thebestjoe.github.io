@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { events } from '../data/events';
-import { Event } from '../types';
+import { events } from '../data/events.ts';
+import { Event } from '../types.ts';
 
 const CalendarIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 inline-block text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

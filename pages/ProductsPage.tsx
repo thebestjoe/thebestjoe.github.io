@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Product } from '../types';
-import { products } from '../data/products';
+import { Product } from '../types.ts';
+import { products } from '../data/products.ts';
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   return (
