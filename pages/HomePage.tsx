@@ -1,65 +1,55 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { products } from '../data/products';
+import ProductCard from '../components/ProductCard';
 
 const HomePage: React.FC = () => {
+  const featuredProducts = products.slice(0, 3);
+
   return (
-    <div className="animate-fadeIn space-y-16 md:space-y-24">
+    <div className="space-y-16 md:space-y-24">
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center text-center text-white rounded-lg overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center brightness-50"
-          style={{ backgroundImage: "url('https://picsum.photos/1600/900?nature,greenery')" }}
-        ></div>
-        <div className="relative z-10 px-4">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">The Soul of the Plant</h1>
-          <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto">Discover the transformative power of spagyrics, where ancient alchemy meets modern herbalism.</p>
+      <section className="text-center py-16 md:py-24 bg-white rounded-lg shadow-sm border border-stone-200">
+        <div className="max-w-3xl mx-auto px-4">
+          <h1 className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight">The Soul of the Plant</h1>
+          <p className="mt-6 text-lg md:text-xl text-stone-600 leading-relaxed">
+            Discover the ancient art of Spagyrics, an alchemical tradition that seeks to separate, purify, and recombine the essence of plants to create potent, holistic remedies.
+          </p>
           <Link
             to="/products"
-            className="mt-8 inline-block bg-yellow-400 text-black font-bold py-3 px-8 rounded-full hover:bg-yellow-500 transition-all duration-300"
+            className="mt-10 inline-block bg-brand-red text-white font-bold tracking-wider uppercase text-sm px-8 py-4 rounded-md hover:bg-black transition-colors duration-300 shadow-lg"
           >
-            Explore Our Elixirs
+            Explore Our Creations
           </Link>
         </div>
       </section>
 
-      {/* Intro Section */}
-      <section className="text-center">
-        <h2 className="text-4xl font-bold text-gray-800">What is Spagyrics?</h2>
-        <div className="mt-6 max-w-3xl mx-auto text-lg text-gray-600 space-y-4 leading-relaxed">
-          <p>
-            Derived from the Greek words 'spao' (to separate) and 'ageiro' (to combine), spagyrics is a holistic alchemical process. We gently separate the three core principles of a plant—its essential oils (Soul), alcohol (Spirit), and mineral salts (Body)—purify them, and reunite them to create a potent, energetically complete elixir.
-          </p>
-          <p>
-            This method captures the full spectrum of the plant's healing potential, creating remedies that work on the physical, energetic, and spiritual levels.
-          </p>
+      {/* Featured Products Section */}
+      <section>
+        <h2 className="text-4xl font-bold text-center text-stone-900 mb-12">Featured Preparations</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredProducts.map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
-         <Link
-            to="/about"
-            className="mt-8 inline-block text-red-600 font-semibold py-2 px-6 border-b-2 border-red-600 hover:bg-red-50 rounded-t-lg transition-colors duration-300"
-          >
-            Learn Our Philosophy
-          </Link>
+        <div className="text-center mt-12">
+            <Link to="/products" className="text-brand-red hover:text-black font-semibold">
+                View All Products &rarr;
+            </Link>
+        </div>
       </section>
 
-      {/* Featured Section */}
-      <section className="py-16 md:py-20 bg-gray-100 rounded-lg">
-        <div className="container mx-auto px-4 text-center">
-            <h2 className="text-4xl font-bold text-gray-800">From Seed to Bottle</h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Our commitment is to purity, potency, and planetary harmony.</p>
-            <div className="mt-12 grid md:grid-cols-3 gap-8 text-left">
-                <div className="p-6">
-                    <h3 className="text-2xl font-semibold text-gray-900">Organic & Wildcrafted</h3>
-                    <p className="mt-2 text-gray-600">We source our plants from certified organic farms or ethically wildcraft them from pristine environments, ensuring the highest vibrational quality.</p>
-                </div>
-                <div className="p-6">
-                    <h3 className="text-2xl font-semibold text-gray-900">Alchemical Process</h3>
-                    <p className="mt-2 text-gray-600">Following timetested traditions, our preparations are aligned with planetary cycles to enhance the specific virtues of each plant.</p>
-                </div>
-                <div className="p-6">
-                    <h3 className="text-2xl font-semibold text-gray-900">Holistic Wellness</h3>
-                    <p className="mt-2 text-gray-600">Our spagyrics are designed to support balance and harmony within the body's interconnected systems, promoting true well-being.</p>
-                </div>
-            </div>
+      {/* What is Spagyria Section */}
+      <section className="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-stone-200">
+        <h2 className="text-4xl font-bold text-stone-900 text-center">What is Spagyria?</h2>
+        <div className="mt-6 max-w-4xl mx-auto text-stone-700 leading-loose space-y-4">
+            <p>
+                Spagyria (from Greek: spao, to separate, and ageiro, to reunite) is a branch of practical laboratory alchemy applied to the plant kingdom. It is a holistic process where the three essential principles of a plant—<span className="font-semibold text-gold">Sulphur (the soul, or essential oil)</span>, <span className="font-semibold text-silver">Mercury (the spirit, or alcohol)</span>, and <span className="font-semibold text-stone-800">Salt (the body, or mineral salts)</span>—are separated, purified, and then recombined.
+            </p>
+            <p>
+                This intricate process creates a preparation that is more potent, biocompatible, and energetically complete than a simple tincture or extract. It is a remedy that works on the physical, energetic, and spiritual levels, honoring the complete being of the plant to nourish the complete being of a person.
+            </p>
         </div>
       </section>
     </div>

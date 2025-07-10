@@ -1,33 +1,18 @@
+
 export interface Product {
-  id: number;
+  id: string;
   name: string;
-  tincture: string;
-  description: string;
-  imageUrl: string;
-  galleryUrls: string[];
+  shortDescription: string;
   longDescription: string;
-  keyBenefits: string[];
-  planetaryInfluence: string;
+  price: number;
+  imageUrl: string;
+  category: string;
 }
 
 export interface Event {
-  id: number;
-  title: string;
-  date: string;
-  description: string;
-  type: 'Workshop' | 'Webinar' | 'Consultation';
-  price?: number;
-}
-
-export interface ResourceItem {
-  title: string;
-  author?: string; // Optional: For books
-  url?: string;    // Optional: For websites
-  description: string;
-}
-
-export interface ResourceCategory {
-  title: string;
-  description: string;
-  items: ResourceItem[];
+    id: string;
+    title: string;
+    date: string;
+    location: string;
+    description: string;
 }

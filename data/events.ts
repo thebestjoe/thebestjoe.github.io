@@ -1,27 +1,26 @@
-import { Event } from '../types.ts';
+
+import { Event } from '../types';
 
 export const events: Event[] = [
-  {
-    id: 1,
-    title: 'Introduction to Spagyrics: A Practical Workshop',
-    date: 'Saturday, August 10, 2024 - 10:00 AM',
-    description: 'Join us for a hands-on workshop where you will learn the fundamental principles of spagyrics. Participants will get to see the alchemical process firsthand and create a simple tincture to take home.',
-    type: 'Workshop',
-    price: 150,
-  },
-  {
-    id: 2,
-    title: 'Planetary Correspondences in Herbalism',
-    date: 'Wednesday, September 4, 2024 - 7:00 PM (Online)',
-    description: 'Discover how ancient astrologers linked plants to planets and how you can use this knowledge to enhance your herbal preparations. This is an online webinar accessible from anywhere.',
-    type: 'Webinar',
-    price: 45,
-  },
-  {
-    id: 3,
-    title: 'Personal Alchemical Consultation',
-    date: 'By Appointment',
-    description: 'A one-on-one consultation to discuss your personal wellness journey and how spagyric remedies can be tailored to support your specific constitution and goals. Book your session below.',
-    type: 'Consultation',
-  },
-];
+    {
+        id: 'intro-spagyrics-workshop',
+        title: 'Introduction to Spagyrics Workshop',
+        date: 'Saturday, October 12, 2024 - 10:00 AM to 4:00 PM',
+        location: 'Online via Zoom',
+        description: 'Join us for a comprehensive one-day workshop covering the theory and basic practice of spagyric alchemy. We will explore the three principles (Sulphur, Mercury, Salt) and demonstrate the initial steps of creating a plant tincture.'
+    },
+    {
+        id: 'planetary-alchemy-seminar',
+        title: 'Planetary Alchemy & Herbalism Seminar',
+        date: 'Sunday, November 3, 2024 - 1:00 PM to 5:00 PM',
+        location: 'Glastonbury, UK',
+        description: 'A deep dive into the correspondence between the seven classical planets and the plant kingdom. Learn how to align your preparations with astrological timings for enhanced potency and specific effects.'
+    },
+    {
+        id: 'advanced-distillation-course',
+        title: 'Advanced Alchemical Distillation Course',
+        date: 'Weekend of December 7-8, 2024',
+        location: 'Our laboratory in Somerset, UK',
+        description: 'An intensive, hands-on course for those with prior experience. This course will focus on advanced techniques for separating and purifying the Mercury (alcohol/spirit) of the plant. Limited spots available.'
+    }
+]

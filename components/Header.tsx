@@ -1,52 +1,49 @@
+
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { SunIcon, MoonIcon } from './icons';
 
-const SpagyriaIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-red-600">
-        <path d="M12 21v-4"/>
-        <path d="M12 9.4V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v.4"/>
-        <path d="M12 5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v.4"/>
-        <path d="m5 11 2.3 2.3c.3.3.7.3 1 0L12 9.4l3.7 3.7c.3.3.7.3 1 0L19 11"/>
-        <path d="M5 11a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h1"/>
-        <path d="M19 11a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-1"/>
-    </svg>
-);
-
-
-const getNavLinkClass = ({ isActive }: { isActive: boolean }): string => {
-    const baseClasses = "text-lg text-gray-600 hover:text-red-600 transition-colors duration-300 pb-2";
-    const activeClasses = "text-red-600 font-semibold border-b-2 border-red-600";
-    return isActive ? `${baseClasses} ${activeClasses}` : baseClasses;
-};
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Products', path: '/products' },
+  { name: 'Events', path: '/events' },
+  { name: 'About', path: '/about' },
+  { name: 'Resources', path: '/resources' },
+  { name: 'Contact', path: '/contact' },
+];
 
 const Header: React.FC = () => {
+  const activeLinkStyle = {
+    color: '#A18A68',
+    borderBottom: '2px solid #A18A68'
+  };
+
   return (
-    <header className="bg-white py-6">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center border-b border-gray-200">
-        <Link to="/" className="flex items-center space-x-3">
-          <SpagyriaIcon/>
-          <span className="font-serif text-2xl font-bold tracking-tight text-black">Spagyria</span>
-        </Link>
-        <nav className="hidden md:flex items-center space-x-10">
-          <NavLink to="/" className={getNavLinkClass}>
-            Home
-          </NavLink>
-          <NavLink to="/products" className={getNavLinkClass}>
-            Products
-          </NavLink>
-          <NavLink to="/events" className={getNavLinkClass}>
-            Events
-          </NavLink>
-          <NavLink to="/contact" className={getNavLinkClass}>
-            Contact
-          </NavLink>
-          <NavLink to="/about" className={getNavLinkClass}>
-            About
-          </NavLink>
-          <NavLink to="/resources" className={getNavLinkClass}>
-            Resources
-          </NavLink>
-        </nav>
+    <header className="bg-black shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          <div className="flex items-center">
+            <NavLink to="/" className="text-white hover:text-gold transition-colors duration-300">
+                <div className="flex items-center space-x-3">
+                    <SunIcon className="h-6 w-6 text-gold" />
+                    <span className="text-2xl font-semibold font-serif tracking-wider">SPAGYRIA</span>
+                    <MoonIcon className="h-6 w-6 text-silver" />
+                </div>
+            </NavLink>
+          </div>
+          <nav className="hidden md:flex space-x-8">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className="text-white hover:text-gold transition-colors duration-300 text-sm font-medium tracking-widest uppercase pb-1"
+                style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
+              >
+                {link.name}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );

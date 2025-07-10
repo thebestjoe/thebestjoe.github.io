@@ -1,13 +1,14 @@
+
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout.tsx';
-import HomePage from './pages/HomePage.tsx';
-import ProductsPage from './pages/ProductsPage.tsx';
-import AboutPage from './pages/AboutPage.tsx';
-import ProductDetailPage from './pages/ProductDetailPage.tsx';
-import EventsPage from './pages/EventsPage.tsx';
-import ContactPage from './pages/ContactPage.tsx';
-import ResourcesPage from './pages/ResourcesPage.tsx';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import EventsPage from './pages/EventsPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import ResourcesPage from './pages/ResourcesPage';
 
 const App: React.FC = () => {
   return (
@@ -16,11 +17,11 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
+          <Route path="/products/:productId" element={<ProductDetailPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/resources" element={<ResourcesPage />} />
         </Routes>
       </Layout>
     </HashRouter>
