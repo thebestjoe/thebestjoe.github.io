@@ -25,6 +25,7 @@
 
     <script>
     tailwind.config = {
+        darkMode: 'class',
         theme: {
             extend: {
                 colors: {
@@ -34,6 +35,8 @@
                     'brand-green': '#14532d',
                     'brand-gold': '#D4AF37',
                     'brand-silver': '#C0C0C0',
+                    'brand-gray-dark': '#2a2a2a',
+                    'brand-gray-darker': '#3a3a3a',
                 },
                 fontFamily: {
                     serif: ['Cormorant Garamond', 'serif'],
@@ -47,19 +50,19 @@
         html {
             scroll-behavior: smooth;
         }
+        .dark {
+            color-scheme: dark;
+        }
         section[id] {
             scroll-margin-top: 80px; /* Adjust this value to match your header's height */
-        }
-        .section-fade-in {
-            animation: fadeIn 0.8s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         ::selection {
             background-color: #D4AF37;
             color: #1a1a1a;
+        }
+        .dark ::selection {
+            background-color: #8c2d2d;
+            color: #FDFDFD;
         }
         .nav-link::after {
             content: '';
@@ -82,10 +85,26 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        .dark .product-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(212, 175, 55, 0.1), 0 4px 6px -2px rgba(212, 175, 55, 0.05);
+        }
+        /* New animation for the overlay */
+        @keyframes fade-in-scale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .animate-fade-in-scale {
+            animation: fade-in-scale 0.3s ease-out forwards;
+        }
     </style>
-<link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-brand-white text-brand-black font-sans antialiased">
+<body class="bg-brand-white text-brand-black dark:bg-brand-black dark:text-brand-white/90 font-sans antialiased">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -93,55 +112,73 @@
 
         const sections = ['Home', 'Products', 'Events', 'About', 'Resources', 'Contact'];
 
-        const Header = ({ activeSection, setActiveSection }) => {
+        const Header = ({ activeSection, setActiveSection, onLogoClick, theme, toggleTheme }) => {
             const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
             const handleNavClick = (section) => {
                 setActiveSection(section);
                 setIsMobileMenuOpen(false);
-                // Manually trigger scroll for reliability
                 const element = document.getElementById(section.toLowerCase());
                 if (element) {
                     element.scrollIntoView();
                 }
             };
 
+            const ThemeToggleButton = () => (
+                 <button 
+                    onClick={toggleTheme} 
+                    className="p-2 rounded-full text-brand-black hover:bg-brand-black/10 dark:text-brand-white dark:hover:bg-brand-white/10 transition-colors"
+                    aria-label="Toggle dark mode"
+                >
+                    {theme === 'light' ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 6a6 6 0 100 12 6 6 0 000-12z" /></svg>
+                    )}
+                </button>
+            );
+
             return (
-                <header className="sticky top-0 z-50 bg-brand-white/80 backdrop-blur-md">
-                    <div className="container mx-auto px-6 py-4 flex justify-between items-center border-b border-brand-silver/50">
+                <header className="sticky top-0 z-50 bg-brand-white/80 dark:bg-brand-black/80 backdrop-blur-md">
+                    <div className="container mx-auto px-6 h-20 flex justify-between items-center border-b border-brand-silver/50 dark:border-brand-silver/20">
                         <a 
                             href="#home"
-                            onClick={(e) => { e.preventDefault(); handleNavClick('Home'); }}
-                            className="flex items-center text-3xl font-serif font-bold text-brand-black cursor-pointer"
+                            onClick={(e) => { e.preventDefault(); onLogoClick(); }}
+                            className="h-full flex items-center text-3xl font-serif font-bold text-brand-black dark:text-brand-white cursor-pointer"
+                            aria-label="Discover the symbolism of Spagyria"
                         >
-                            <img src="logo-transparent.png" alt="Spagyria Logo" className="h-10 w-auto mr-3" />
+                            <img src="logo-transparent.png" alt="Spagyria Logo" className="h-full aspect-square mr-3" />
                             <span>Spagyria</span>
                         </a>
 
                         {/* Desktop Navigation */}
-                        <nav className="hidden lg:block">
+                        <nav className="hidden lg:flex items-center">
                             <ul className="flex space-x-6">
                                 {sections.map(section => (
                                     <li key={section}>
                                         <a 
                                             href={`#${section.toLowerCase()}`}
                                             onClick={(e) => { e.preventDefault(); handleNavClick(section); }}
-                                            className={`text-base font-medium uppercase tracking-wider cursor-pointer nav-link ${activeSection === section ? 'active text-brand-gold' : 'text-brand-black hover:text-brand-gold'}`}
+                                            className={`text-base font-medium uppercase tracking-wider cursor-pointer nav-link ${activeSection === section ? 'active text-brand-gold' : 'text-brand-black dark:text-brand-white hover:text-brand-gold dark:hover:text-brand-gold'}`}
                                         >
                                             {section}
                                         </a>
                                     </li>
                                 ))}
                             </ul>
+                            <div className="ml-6">
+                                <ThemeToggleButton />
+                            </div>
                         </nav>
 
-                        {/* Mobile Menu Button */}
-                        <div className="lg:hidden">
+                        {/* Mobile Menu Actions */}
+                        <div className="lg:hidden flex items-center gap-2">
+                            <ThemeToggleButton />
                             <button 
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 aria-label="Toggle menu"
                                 aria-expanded={isMobileMenuOpen}
-                                className="text-brand-black focus:outline-none"
+                                className="text-brand-black dark:text-brand-white focus:outline-none p-2"
                             >
                                 {isMobileMenuOpen ? (
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -154,14 +191,14 @@
 
                     {/* Mobile Navigation Menu */}
                     <div className={`lg:hidden absolute top-full left-0 w-full overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-96' : 'max-h-0'}`}>
-                        <nav className="bg-brand-white/95 backdrop-blur-md shadow-lg">
+                        <nav className="bg-brand-white/95 dark:bg-brand-black/95 backdrop-blur-md shadow-lg">
                              <ul className="flex flex-col items-center py-4">
                                 {sections.map(section => (
                                     <li key={section} className="w-full text-center">
                                         <a 
                                             href={`#${section.toLowerCase()}`}
                                             onClick={(e) => { e.preventDefault(); handleNavClick(section); }}
-                                            className="block py-3 text-lg uppercase tracking-wider text-brand-black hover:bg-brand-gold/10 transition-colors"
+                                            className="block py-3 text-lg uppercase tracking-wider text-brand-black dark:text-brand-white hover:bg-brand-gold/10 transition-colors"
                                         >
                                             {section}
                                         </a>
@@ -176,7 +213,7 @@
         
         const SectionWrapper = ({ id, title, children }) => (
             <section id={id} className="container mx-auto px-6 py-16 lg:py-24">
-                <h2 className="text-4xl lg:text-5xl font-serif font-bold text-center mb-12 text-brand-black">{title}</h2>
+                <h2 className="text-4xl lg:text-5xl font-serif font-bold text-center mb-12 text-brand-black dark:text-brand-white">{title}</h2>
                 {children}
             </section>
         );
@@ -184,8 +221,8 @@
         const Home = () => (
             <section id="home" className="text-center min-h-screen flex flex-col justify-center items-center -mt-20">
                  <div className="max-w-3xl mx-auto px-6">
-                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-brand-black leading-tight">The Art of Spagyric Alchemy</h1>
-                    <p className="mt-6 text-lg md:text-xl text-brand-black/80 max-w-2xl mx-auto">
+                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-brand-black dark:text-brand-white leading-tight">The Art of Spagyric Alchemy</h1>
+                    <p className="mt-6 text-lg md:text-xl text-brand-black/80 dark:text-brand-white/80 max-w-2xl mx-auto">
                         Unlocking the vital essence of nature to create potent remedies for body, soul, and spirit. Welcome to the journey of transformation.
                     </p>
                     <a href="#products" className="mt-10 inline-block px-8 py-3 bg-brand-red text-white font-semibold rounded-full shadow-lg hover:bg-brand-red/90 transition-colors duration-300">
@@ -240,7 +277,7 @@
                         title: 'The Alchemical Virtues of Lavender',
                         correspondence: 'Planet: Mercury. Element: Air.',
                         actions: 'Nervine relaxant, antiseptic, antispasmodic, antidepressant.',
-                        usage: 'Take 5-10 drops to ease tension, quiet the mind, or before meditative practices.',
+                        usage: 'Take 5-10 drops to ease a tension, quiet the mind, or before meditative practices.',
                         ingredients: 'Spagyrically prepared tincture of Lavandula angustifolia, organic cane alcohol, purified water.'
                     }
                 },
@@ -256,17 +293,113 @@
                         ingredients: 'Spagyrically prepared tincture of Rosa damascena, organic cane alcohol, purified water.'
                     }
                 },
+                { 
+                    name: 'Jovial Tincture of Dandelion', 
+                    image: generatePlaceholderSvg('#4F46E5'), // indigo-600
+                    description: 'Supports liver health and promotes a sense of optimistic expansion.', 
+                    details: {
+                        title: 'The Alchemical Virtues of Dandelion',
+                        correspondence: 'Planet: Jupiter. Element: Air.',
+                        actions: 'Hepatic, diuretic, cholagogue, bitter tonic.',
+                        usage: 'Take 5-15 drops before meals to support digestion and liver function.',
+                        ingredients: 'Spagyrically prepared tincture of Taraxacum officinale, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Martial Tincture of Nettle', 
+                    image: generatePlaceholderSvg('#DC2626'), // red-600
+                    description: 'Builds vitality, courage, and fortifies the blood with essential minerals.', 
+                    details: {
+                        title: 'The Alchemical Virtues of Nettle',
+                        correspondence: 'Planet: Mars. Element: Fire.',
+                        actions: 'Nutritive tonic, astringent, diuretic, hematopoietic.',
+                        usage: 'Take 10-20 drops daily as a nutritive tonic to build strength and resilience.',
+                        ingredients: 'Spagyrically prepared tincture of Urtica dioica, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Saturnine Tincture of Horsetail', 
+                    image: generatePlaceholderSvg('#4B5563'), // cool-gray-600
+                    description: 'Strengthens structural tissues and encourages discipline and order.', 
+                    details: {
+                        title: 'The Alchemical Virtues of Horsetail',
+                        correspondence: 'Planet: Saturn. Element: Earth.',
+                        actions: 'Diuretic, astringent, vulnerary, rich in silica.',
+                        usage: 'Take 5-10 drops daily to support bone, hair, nail, and skin health.',
+                        ingredients: 'Spagyrically prepared tincture of Equisetum arvense, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Quintessence of Hawthorn', 
+                    image: generatePlaceholderSvg('#F43F5E'), // rose-500
+                    description: 'A profound tonic for the heart, both physically and emotionally.', 
+                    details: {
+                        title: 'The Alchemical Virtues of Hawthorn',
+                        correspondence: 'Planet: Mars/Saturn. Element: Fire/Earth.',
+                        actions: 'Cardiotonic, hypotensive, nervine, antioxidant.',
+                        usage: 'Take 10-15 drops twice daily for long-term heart support and emotional strength.',
+                        ingredients: 'Spagyrically prepared tincture of Crataegus monogyna, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Albedo Spagyric of White Lily', 
+                    image: generatePlaceholderSvg('#E5E7EB'), // gray-200
+                    description: 'A preparation for purification, clarity, and inner peace.', 
+                    details: {
+                        title: 'The Stage of Albedo',
+                        correspondence: 'Alchemical Stage: Albedo (The White). Moon.',
+                        actions: 'Purifying, calming, promotes emotional clarity.',
+                        usage: 'Use during meditation or times of transition to cleanse the psyche.',
+                        ingredients: 'Spagyrically prepared essence of Lilium candidum, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Citrinitas Elixir of Calendula', 
+                    image: generatePlaceholderSvg('#F59E0B'), // amber-500
+                    description: 'Brings solar consciousness and joy, awakening the inner sun.', 
+                    details: {
+                        title: 'The Stage of Citrinitas',
+                        correspondence: 'Alchemical Stage: Citrinitas (The Yellow). Sun.',
+                        actions: 'Anti-inflammatory, vulnerary, lymphagogue, uplifting.',
+                        usage: 'Take 5 drops in the morning to encourage a bright and positive outlook.',
+                        ingredients: 'Spagyrically prepared tincture of Calendula officinalis, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Rubedo Essence of St. John\'s Wort', 
+                    image: generatePlaceholderSvg('#B91C1C'), // red-700
+                    description: 'For integration, wholeness, and the realization of the Great Work.', 
+                    details: {
+                        title: 'The Stage of Rubedo',
+                        correspondence: 'Alchemical Stage: Rubedo (The Red). Sun/Gold.',
+                        actions: 'Nervine tonic, antidepressant, antiviral, vulnerary.',
+                        usage: 'For advanced practitioners working towards spiritual integration. Use with intention.',
+                        ingredients: 'Spagyrically prepared tincture of Hypericum perforatum, organic cane alcohol, purified water.'
+                    }
+                },
+                { 
+                    name: 'Spagyric Salt of the Earth', 
+                    image: generatePlaceholderSvg('#78350F'), // amber-900
+                    description: 'A mineral-rich supplement from purified plant salts, embodying the principle of body.', 
+                    details: {
+                        title: 'The Principle of Salt',
+                        correspondence: 'Principle: Salt (Body). Element: Earth.',
+                        actions: 'Remineralizing, grounding, alkalinizing.',
+                        usage: 'Add a tiny pinch to water or food to reintroduce essential minerals to the body.',
+                        ingredients: 'Purified, crystallized mineral salts obtained from the calcination of a blend of organic herbs.'
+                    }
+                },
             ];
 
             return (
                  <SectionWrapper id="products" title="Our Spagyric Preparations">
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
                         {productList.map((product, index) => (
-                            <div key={product.name} className="product-card bg-white border border-brand-silver/30 rounded-lg overflow-hidden shadow-sm flex flex-col">
+                            <div key={product.name} className="product-card bg-white dark:bg-brand-gray-dark border border-brand-silver/30 dark:border-brand-silver/20 rounded-lg overflow-hidden shadow-sm flex flex-col">
                                 <img src={product.image} alt={product.name} className="w-full h-56 object-cover"/>
                                 <div className="p-6 flex-grow flex flex-col">
-                                    <h3 className="text-xl font-serif font-semibold text-brand-black">{product.name}</h3>
-                                    <p className="mt-2 text-brand-black/70 flex-grow min-h-[6rem]">{product.description}</p>
+                                    <h3 className="text-xl font-serif font-semibold text-brand-black dark:text-brand-white">{product.name}</h3>
+                                    <p className="mt-2 text-brand-black/70 dark:text-brand-white/70 flex-grow min-h-[6rem]">{product.description}</p>
                                     <div className="mt-4 flex justify-end items-center">
                                         <button 
                                             onClick={() => toggleProduct(product.name)}
@@ -282,9 +415,9 @@
                                     id={`details-${index}`}
                                     className={`transition-all duration-500 ease-in-out overflow-hidden ${expandedProduct === product.name ? 'max-h-[500px]' : 'max-h-0'}`}
                                 >
-                                    <div className="p-6 pt-4 border-t border-brand-silver/30 bg-gray-50/50">
-                                        <h4 className="text-lg font-serif font-semibold text-brand-black">{product.details.title}</h4>
-                                        <ul className="mt-3 space-y-2 text-brand-black/80 text-sm">
+                                    <div className="p-6 pt-4 border-t border-brand-silver/30 dark:border-brand-silver/20 bg-gray-50/50 dark:bg-brand-gray-darker">
+                                        <h4 className="text-lg font-serif font-semibold text-brand-black dark:text-brand-white">{product.details.title}</h4>
+                                        <ul className="mt-3 space-y-2 text-brand-black/80 dark:text-brand-white/80 text-sm">
                                             <li><strong>Correspondence:</strong> {product.details.correspondence}</li>
                                             <li><strong>Actions:</strong> {product.details.actions}</li>
                                             <li><strong>Usage:</strong> {product.details.usage}</li>
@@ -300,25 +433,84 @@
         };
 
         const Events = () => {
+            const [expandedEvent, setExpandedEvent] = useState(null);
+
+            const toggleEvent = (eventTitle) => {
+                setExpandedEvent(expandedEvent === eventTitle ? null : eventTitle);
+            };
+
             const eventList = [
-                { date: 'Oct 12, 2024', title: 'Introduction to Practical Alchemy Workshop', location: 'London, UK' },
-                { date: 'Nov 09, 2024', title: 'Online Webinar: The Three Philosophical Principles', location: 'Zoom' },
-                { date: 'Dec 07, 2024', title: 'Winter Solstice Plant Meditation Circle', location: 'Glastonbury, UK' },
+                { 
+                    date: 'Oct 12, 2024', 
+                    title: 'Introduction to Practical Alchemy Workshop', 
+                    location: 'London, UK',
+                    details: {
+                        description: 'A full-day immersive workshop covering the fundamental theories and practices of Spagyric alchemy. Participants will learn to create their own basic tincture and understand the philosophical principles of Salt, Sulphur, and Mercury. All materials provided. Suitable for complete beginners.',
+                        agenda: 'Morning: Theory & Philosophy. Afternoon: Practical lab work.',
+                        booking: 'Spaces are limited. Book your spot via our online portal.'
+                    }
+                },
+                { 
+                    date: 'Nov 09, 2024', 
+                    title: 'Online Webinar: The Three Philosophical Principles', 
+                    location: 'Zoom',
+                    details: {
+                        description: 'A 2-hour deep-dive webinar exploring the Tria Prima: Sulphur (the soul), Mercury (the spirit), and Salt (the body). We will discuss how these principles manifest in plants, minerals, and ourselves, and how understanding them is key to alchemical work. A Q&A session will follow.',
+                        agenda: '1-hour presentation, 30-min guided meditation, 30-min Q&A.',
+                        booking: 'Register online to receive your Zoom link. A recording will be available to all attendees.'
+                    }
+                },
+                { 
+                    date: 'Dec 07, 2024', 
+                    title: 'Winter Solstice Plant Meditation Circle', 
+                    location: 'Glastonbury, UK',
+                    details: {
+                        description: 'Join us for a special meditative gathering to honor the Winter Solstice. We will work with a seasonal plant essence, journeying inward to connect with its spirit and the wisdom it holds for the darkest time of the year. A beautiful way to reflect and set intentions for the returning light.',
+                        agenda: 'Opening circle, plant introduction, guided meditation, sharing circle, closing.',
+                        booking: 'Please email us to reserve your place. Limited to 12 participants.'
+                    }
+                },
             ];
+
             return (
                 <SectionWrapper id="events" title="Workshops & Events">
-                    <div className="max-w-2xl mx-auto">
+                    <div className="max-w-3xl mx-auto">
                         <ul className="space-y-6">
-                            {eventList.map(event => (
-                                <li key={event.title} className="p-6 border border-brand-silver/30 rounded-lg flex items-center space-x-6 hover:shadow-lg transition-shadow">
-                                     <div className="text-center border-r border-brand-silver/30 pr-6">
-                                        <p className="text-xl font-bold text-brand-red">{event.date.split(' ')[1].replace(',', '')}</p>
-                                        <p className="text-md text-brand-black/70">{event.date.split(' ')[0]}</p>
-                                     </div>
-                                     <div>
-                                        <h3 className="text-xl font-serif font-semibold text-brand-black">{event.title}</h3>
-                                        <p className="text-brand-black/60">{event.location}</p>
-                                     </div>
+                            {eventList.map((event, index) => (
+                                <li key={event.title} className="bg-white dark:bg-brand-gray-dark border border-brand-silver/30 dark:border-brand-silver/20 rounded-lg overflow-hidden shadow-sm transition-shadow hover:shadow-lg">
+                                    <div className="p-6 flex justify-between items-start gap-4">
+                                        <div className="flex items-start space-x-6">
+                                             <div className="text-center border-r border-brand-silver/30 dark:border-brand-silver/20 pr-6 flex-shrink-0">
+                                                <p className="text-xl font-bold text-brand-red">{event.date.split(' ')[1].replace(',', '')}</p>
+                                                <p className="text-md text-brand-black/70 dark:text-brand-white/70">{event.date.split(' ')[0]}</p>
+                                             </div>
+                                             <div>
+                                                <h3 className="text-xl font-serif font-semibold text-brand-black dark:text-brand-white">{event.title}</h3>
+                                                <p className="text-brand-black/60 dark:text-brand-white/60">{event.location}</p>
+                                             </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => toggleEvent(event.title)}
+                                            className="px-4 py-2 bg-brand-green text-white text-sm font-semibold rounded-md hover:bg-brand-green/90 transition-colors whitespace-nowrap flex-shrink-0"
+                                            aria-expanded={expandedEvent === event.title}
+                                            aria-controls={`event-details-${index}`}
+                                        >
+                                            {expandedEvent === event.title ? 'Less Info' : 'More Info'}
+                                        </button>
+                                    </div>
+                                    <div
+                                        id={`event-details-${index}`}
+                                        className={`transition-all duration-500 ease-in-out overflow-hidden ${expandedEvent === event.title ? 'max-h-[500px]' : 'max-h-0'}`}
+                                    >
+                                        <div className="p-6 pt-4 border-t border-brand-silver/30 dark:border-brand-silver/20 bg-gray-50/50 dark:bg-brand-gray-darker">
+                                            <h4 className="text-lg font-serif font-semibold text-brand-black dark:text-brand-white">Further Details</h4>
+                                            <ul className="mt-3 space-y-2 text-brand-black/80 dark:text-brand-white/80 text-sm">
+                                                <li><strong className="font-semibold text-brand-black/90 dark:text-brand-white/90">Description:</strong> {event.details.description}</li>
+                                                <li><strong className="font-semibold text-brand-black/90 dark:text-brand-white/90">Agenda:</strong> {event.details.agenda}</li>
+                                                <li><strong className="font-semibold text-brand-black/90 dark:text-brand-white/90">Registration:</strong> {event.details.booking}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
@@ -329,7 +521,7 @@
         
         const About = () => (
             <SectionWrapper id="about" title="Our Philosophy">
-                <div className="max-w-3xl mx-auto text-lg text-brand-black/80 space-y-6 text-justify leading-relaxed">
+                <div className="max-w-3xl mx-auto text-lg text-brand-black/80 dark:text-brand-white/80 space-y-6 text-justify leading-relaxed">
                     <p>
                         Spagyria is an ancient branch of alchemy, often called 'plant alchemy', dedicated to the art of creating powerful herbal remedies. The word itself, coined by Paracelsus, comes from the Greek words 'spao' (to separate) and 'ageiro' (to recombine). This is the core of our practice: to separate the three philosophical principles of a plant—its Mercury (spirit), Sulphur (soul), and Salt (body)—purify each one individually, and then recombine them into a perfected, exalted medicine.
                     </p>
@@ -341,21 +533,80 @@
         );
 
         const Resources = () => {
+            const [expandedResource, setExpandedResource] = useState(null);
+
+            const toggleResource = (resourceTitle) => {
+                setExpandedResource(expandedResource === resourceTitle ? null : resourceTitle);
+            };
+
             const resourceList = [
-                { title: 'The Hermetic Museum by Arthur Edward Waite', link: 'https://www.sacred-texts.com/alc/hm/index.htm' },
-                { title: 'Alchemia by Frater Albertus', link: 'https://www.amazon.com/Alchemists-Handbook-Manual-Practical-Laboratory/dp/0877286558' },
-                { title: 'International Alchemy Guild', link: 'https://www.alchemyguild.org/'},
-                { title: 'Adam McLean\'s Alchemy Website', link: 'http://www.alchemywebsite.com/'},
+                { 
+                    title: 'The Hermetic Museum by Arthur Edward Waite', 
+                    link: 'https://www.sacred-texts.com/alc/hm/index.htm',
+                    details: {
+                        description: 'A foundational collection of twenty-two key alchemical tracts, translated into English. It offers a deep dive into the rich allegorical and symbolic language of classical alchemy.',
+                        recommendation: 'Ideal for those wanting to study the primary sources and philosophical underpinnings of the Western alchemical tradition.'
+                    }
+                },
+                { 
+                    title: "The Alchemist's Handbook by Frater Albertus", 
+                    link: 'https://www.amazon.com/Alchemists-Handbook-Manual-Practical-Laboratory/dp/0877286558',
+                    details: {
+                        description: 'Often considered the go-to manual for modern practical laboratory alchemy. Frater Albertus provides clear, step-by-step instructions for creating spagyric tinctures.',
+                        recommendation: 'A must-have for any aspiring practical alchemist. This book bridges the gap between ancient theory and modern practice.'
+                    }
+                },
+                { 
+                    title: 'International Alchemy Guild', 
+                    link: 'https://www.alchemyguild.org/',
+                    details: {
+                        description: 'An online resource and community dedicated to the advancement of alchemical studies in all their forms. Features articles, forums, and a directory of practitioners.',
+                        recommendation: 'A great place to connect with other students of alchemy and find contemporary articles and discussions.'
+                    }
+                },
+                { 
+                    title: 'Adam McLean\'s Alchemy Website', 
+                    link: 'http://www.alchemywebsite.com/',
+                    details: {
+                        description: 'An extensive digital archive of alchemical texts, emblems, and artwork. Maintained for decades, it is one of the most comprehensive online resources for scholarly research.',
+                        recommendation: 'An unparalleled resource for exploring the visual and textual history of alchemy. The emblem galleries are particularly insightful.'
+                    }
+                },
             ];
+
              return (
                 <SectionWrapper id="resources" title="Further Reading">
-                    <div className="max-w-2xl mx-auto">
-                        <ul className="space-y-4">
-                            {resourceList.map(res => (
-                                <li key={res.title} className="p-4 border-l-4 border-brand-gold bg-brand-gold/5 rounded-r-lg">
-                                    <a href={res.link} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-green hover:underline">
-                                        {res.title}
-                                    </a>
+                    <div className="max-w-3xl mx-auto">
+                        <ul className="space-y-6">
+                            {resourceList.map((resource, index) => (
+                                <li key={resource.title} className="bg-white dark:bg-brand-gray-dark border border-brand-silver/30 dark:border-brand-silver/20 rounded-lg overflow-hidden shadow-sm transition-shadow hover:shadow-lg">
+                                    <div className="p-6 flex justify-between items-center gap-4">
+                                        <div className="flex-grow">
+                                            <h3 className="text-xl font-serif font-semibold text-brand-black dark:text-brand-white">{resource.title}</h3>
+                                             <a href={resource.link} target="_blank" rel="noopener noreferrer" className="text-sm text-brand-green hover:underline mt-1 inline-block">
+                                                Visit Resource &rarr;
+                                            </a>
+                                        </div>
+                                        <button 
+                                            onClick={() => toggleResource(resource.title)}
+                                            className="px-4 py-2 bg-brand-green text-white text-sm font-semibold rounded-md hover:bg-brand-green/90 transition-colors whitespace-nowrap flex-shrink-0"
+                                            aria-expanded={expandedResource === resource.title}
+                                            aria-controls={`resource-details-${index}`}
+                                        >
+                                            {expandedResource === resource.title ? 'Less Info' : 'More Info'}
+                                        </button>
+                                    </div>
+                                    <div
+                                        id={`resource-details-${index}`}
+                                        className={`transition-all duration-500 ease-in-out overflow-hidden ${expandedResource === resource.title ? 'max-h-[500px]' : 'max-h-0'}`}
+                                    >
+                                        <div className="p-6 pt-4 border-t border-brand-silver/30 dark:border-brand-silver/20 bg-gray-50/50 dark:bg-brand-gray-darker">
+                                            <ul className="space-y-2 text-brand-black/80 dark:text-brand-white/80 text-sm">
+                                                <li><strong className="font-semibold text-brand-black/90 dark:text-brand-white/90">Description:</strong> {resource.details.description}</li>
+                                                <li><strong className="font-semibold text-brand-black/90 dark:text-brand-white/90">Recommendation:</strong> {resource.details.recommendation}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
@@ -366,20 +617,21 @@
 
         const Contact = () => (
              <SectionWrapper id="contact" title="Get In Touch">
-                <div className="max-w-lg mx-auto bg-white p-8 border border-brand-silver/30 rounded-lg shadow-md">
-                    <p className="text-center text-brand-black/70 mb-6">For inquiries, collaborations, or questions, please fill out the form below or email us directly.</p>
-                    <form className="space-y-6">
+                <div className="max-w-lg mx-auto bg-white dark:bg-brand-gray-dark p-8 border border-brand-silver/30 dark:border-brand-silver/20 rounded-lg shadow-md">
+                    <p className="text-center text-brand-black/70 dark:text-brand-white/70 mb-6">For inquiries, collaborations, or questions, please fill out the form below or email us directly.</p>
+                    {/* IMPORTANT: Replace "your_unique_id" with the actual ID from your Formspree form endpoint. */}
+                    <form action="https://formspree.io/f/your_unique_id" method="POST" className="space-y-6">
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-brand-black">Full Name</label>
-                            <input type="text" id="name" name="name" className="mt-1 block w-full px-3 py-2 bg-white border border-brand-silver rounded-md shadow-sm focus:outline-none focus:ring-brand-gold focus:border-brand-gold"/>
+                            <label htmlFor="name" className="block text-sm font-medium text-brand-black dark:text-brand-white/90">Full Name</label>
+                            <input type="text" id="name" name="name" className="mt-1 block w-full px-3 py-2 bg-white dark:bg-brand-gray-darker border border-brand-silver dark:border-brand-silver/40 rounded-md shadow-sm focus:outline-none focus:ring-brand-gold focus:border-brand-gold" required />
                         </div>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-brand-black">Email Address</label>
-                            <input type="email" id="email" name="email" className="mt-1 block w-full px-3 py-2 bg-white border border-brand-silver rounded-md shadow-sm focus:outline-none focus:ring-brand-gold focus:border-brand-gold"/>
+                            <label htmlFor="email" className="block text-sm font-medium text-brand-black dark:text-brand-white/90">Email Address</label>
+                            <input type="email" id="email" name="email" className="mt-1 block w-full px-3 py-2 bg-white dark:bg-brand-gray-darker border border-brand-silver dark:border-brand-silver/40 rounded-md shadow-sm focus:outline-none focus:ring-brand-gold focus:border-brand-gold" required />
                         </div>
                         <div>
-                            <label htmlFor="message" className="block text-sm font-medium text-brand-black">Message</label>
-                            <textarea id="message" name="message" rows="4" className="mt-1 block w-full px-3 py-2 bg-white border border-brand-silver rounded-md shadow-sm focus:outline-none focus:ring-brand-gold focus:border-brand-gold"></textarea>
+                            <label htmlFor="message" className="block text-sm font-medium text-brand-black dark:text-brand-white/90">Message</label>
+                            <textarea id="message" name="message" rows="4" className="mt-1 block w-full px-3 py-2 bg-white dark:bg-brand-gray-darker border border-brand-silver dark:border-brand-silver/40 rounded-md shadow-sm focus:outline-none focus:ring-brand-gold focus:border-brand-gold" required></textarea>
                         </div>
                         <div className="text-center">
                             <button type="submit" className="w-full px-6 py-3 bg-brand-red text-white font-semibold rounded-md shadow-md hover:bg-brand-red/90 transition-colors">
@@ -400,9 +652,100 @@
             </footer>
         );
 
+        const SymbolismOverlay = ({ isVisible, onClose }) => {
+            useEffect(() => {
+                const handleKeyDown = (event) => {
+                    if (event.key === 'Escape') {
+                        onClose();
+                    }
+                };
+
+                if (isVisible) {
+                    document.body.style.overflow = 'hidden';
+                    document.addEventListener('keydown', handleKeyDown);
+                } else {
+                    document.body.style.overflow = 'auto';
+                }
+                
+                return () => { 
+                    document.body.style.overflow = 'auto';
+                    document.removeEventListener('keydown', handleKeyDown);
+                };
+            }, [isVisible, onClose]);
+
+            if (!isVisible) return null;
+
+            return (
+                <div 
+                    className="fixed inset-0 z-[100] bg-brand-black/70 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300"
+                    onClick={onClose}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="symbolism-title"
+                >
+                    <div 
+                        className="bg-brand-white dark:bg-brand-gray-dark dark:border dark:border-brand-silver/20 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button 
+                            onClick={onClose} 
+                            className="absolute top-4 right-4 text-brand-black/50 hover:text-brand-red dark:text-brand-white/50 dark:hover:text-brand-red transition-colors z-10"
+                            aria-label="Close"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                        
+                        <div className="text-center mb-6 flex justify-center items-center gap-4">
+                            <span className="text-7xl sm:text-8xl text-brand-gold" style={{textShadow: '0 0 15px rgba(212, 175, 55, 0.7)'}} aria-label="Sun Symbol">&#9737;</span>
+                            <span className="text-5xl sm:text-6xl text-brand-black/80 dark:text-brand-white/80" aria-label="Union Symbol">&amp;</span>
+                            <span className="text-7xl sm:text-8xl text-brand-silver" style={{textShadow: '0 0 15px rgba(192, 192, 192, 0.7)'}} aria-label="Moon Symbol">&#9789;</span>
+                        </div>
+
+                        <h2 id="symbolism-title" className="text-3xl lg:text-4xl font-serif text-center font-bold text-brand-black dark:text-brand-white mb-6">The Marriage of Sun &amp; Moon</h2>
+                        
+                        <div className="text-brand-black/80 dark:text-brand-white/80 space-y-4 text-justify leading-relaxed text-base">
+                            <p>You've discovered the hidden heart of our philosophy, symbolized in the Great Work of alchemy: the <strong className="font-semibold text-brand-black dark:text-brand-white">Coniunctio</strong>, or the Sacred Marriage.</p>
+                            <p>This ancient symbol represents the union of opposites, the core principle that animates all of creation and the very essence of the spagyric art. It is the dance of duality resolving into unity.</p>
+                            <ul className="list-none space-y-4 mt-5">
+                                <li className="flex items-start gap-4">
+                                    <span className="text-brand-gold font-bold text-2xl mt-1">&#9737;</span>
+                                    <div><strong className="font-semibold text-brand-black dark:text-brand-white">The Sun (Sol):</strong> This is the masculine principle, the fixed, fiery consciousness. In spagyrics, it corresponds to <strong className="font-semibold text-brand-red">Sulphur</strong>—the soul of the plant, its unique essence and essential oils. It is its identity.</div>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                <span className="text-brand-silver font-bold text-2xl mt-1">&#9789;</span>
+                                    <div><strong className="font-semibold text-brand-black dark:text-brand-white">The Moon (Luna):</strong> This is the feminine principle, the volatile, watery subconscious. In spagyrics, it corresponds to <strong className="font-semibold text-brand-green">Mercury</strong>—the spirit of the plant, its life-force, embodied in the alcohol created from its own sugars. It is the animating energy.</div>
+                                </li>
+                            </ul>
+                            <p className="pt-2">The spagyric process, from the Greek <em className="italic">spao</em> (to separate) and <em className="italic">ageiro</em> (to recombine), mirrors this cosmic marriage. We first <strong className="font-semibold">separate</strong> a plant's core components—its Sulphur (soul), Mercury (spirit), and Salt (body). We then <strong className="font-semibold">purify</strong> each one individually. Finally, we <strong className="font-semibold">recombine</strong> them.</p>
+                            <p>This recombination is the <strong className="font-semibold text-brand-black dark:text-brand-white">Coniunctio</strong>. The purified soul and spirit are reunited in a perfected body (the Salt), creating an exalted medicine that is more than the sum of its parts. It is a harmonious being, capable of bringing that same harmony to the one who receives it. This is the secret sealed within our work.</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const App = () => {
             const [activeSection, setActiveSection] = useState('Home');
+            const [isSymbolismVisible, setIsSymbolismVisible] = useState(false);
+            const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
             const sectionRefs = useRef({});
+
+            const handleLogoClick = () => setIsSymbolismVisible(true);
+            const handleCloseSymbolism = () => setIsSymbolismVisible(false);
+
+            useEffect(() => {
+                const root = window.document.documentElement;
+                if (theme === 'dark') {
+                    root.classList.add('dark');
+                } else {
+                    root.classList.remove('dark');
+                }
+                localStorage.setItem('theme', theme);
+            }, [theme]);
+
+            const toggleTheme = () => {
+                setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+            };
 
             useEffect(() => {
                 const observer = new IntersectionObserver(
@@ -437,7 +780,13 @@
 
             return (
                 <React.Fragment>
-                    <Header activeSection={activeSection} setActiveSection={setActiveSection} />
+                    <Header 
+                        activeSection={activeSection} 
+                        setActiveSection={setActiveSection} 
+                        onLogoClick={handleLogoClick}
+                        theme={theme}
+                        toggleTheme={toggleTheme}
+                    />
                     <main>
                         <Home />
                         <Products />
@@ -447,6 +796,7 @@
                         <Contact />
                     </main>
                     <Footer />
+                    <SymbolismOverlay isVisible={isSymbolismVisible} onClose={handleCloseSymbolism} />
                 </React.Fragment>
             );
         };
@@ -455,6 +805,5 @@
         root.render(<App />);
 
     </script>
-<script type="module" src="/index.tsx"></script>
 </body>
 </html>
